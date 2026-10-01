@@ -1,0 +1,385 @@
+/* -------------------------------------------------------------
+   A-TRAINING: HIGH-SPEED APPLE MINIMALISM
+   Adapted from Premium Storefront Architecture (GPU Optimized)
+   ------------------------------------------------------------- */
+
+/* Анимация переливов энергии на хромированном треке (Нагрузка на GPU) */
+@keyframes track-waves {
+    0% { background-position: 0px 0px, 0px 0px, 0% 50%, 100% 50%; }
+    50% { background-position: 0px 0px, 0px 0px, 100% 50%, 0% 50%; }
+    100% { background-position: 0px 0px, 0px 0px, 0% 50%, 100% 50%; }
+}
+
+/* ==========================================================================
+   1. ПРЕМИАЛЬНЫЕ СИСТЕМНЫЕ ЗОНЫ СКОРОСТИ (ТЕМЫ)
+   ========================================================================== */
+
+/* 🌌 ТЕМА 1: NEON MIDNIGHT (По умолчанию) */
+:root, [data-theme="neon"] {
+    --bg-color: #0b0f19;           /* Глубокий полуночный трек */
+    --panel-bg: #131a2c;          /* Матовая темная броня костюма */
+    --text-main: #f8fafc;         /* Матовый белый */
+    --text-muted: #64748b;        /* Серый графит */
+    --atrain-blue: #2563eb;       /* Сигнальный синий Apple iOS */
+    --glow-1: rgba(37, 99, 235, 0.2);  /* Синие блики атриума */
+    --glow-2: rgba(0, 242, 255, 0.15); /* Бирюзовое свечение очков */
+    --grid-line: rgba(255, 255, 255, 0.015);
+    --border-color: rgba(255, 255, 255, 0.06);
+    --input-bg: #070a12;
+    --table-header: #0b1329;
+    --table-hover: rgba(255, 255, 255, 0.02);
+}
+
+/* ☀️ ТЕМА 2: CHROME STADIUM */
+[data-theme="stadium"] {
+    --bg-color: #f1f5f9;           /* Дневной алюминиевый стадион */
+    --panel-bg: #ffffff;          /* Белоснежные глянцевые плитки витрин */
+    --text-main: #0f172a;         /* Глубокий черный Apple текст */
+    --text-muted: #64748b;
+    --atrain-blue: #0052cc;       /* Официальный синий ультрамарин */
+    --glow-1: rgba(168, 218, 220, 0.4); /* Освежающие стадионные блики */
+    --glow-2: rgba(200, 225, 225, 0.5);
+    --grid-line: rgba(0, 0, 0, 0.02);
+    --border-color: rgba(0, 0, 0, 0.06);
+    --input-bg: #f8fafc;
+    --table-header: #f3f4f6;
+    --table-hover: #f1f5f9;
+}
+
+/* ==========================================================================
+   2. КОРПУС СТРАНИЦЫ И ВЫСОКОПРОИЗВОДИТЕЛЬНЫЙ ФОН */
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+    transition: background-color 0.25s ease-in-out, color 0.25s ease-in-out;
+}
+
+/* 🏎️ ДВИЖУЩАЯСЯ СЕТКА ТРЕКА + ИГРАЮЩИЕ БЛИКИ СКОРОСТИ (На GPU) */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: -2;
+
+    /* Четкая решетка плитки Apple-style + мягкие переливы энергии */
+    background-image:
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+        radial-gradient(circle at 15% 25%, var(--glow-1) 0px, transparent 65%),
+        radial-gradient(circle at 85% 75%, var(--glow-2) 0px, transparent 65%);
+
+    background-size: 50px 50px, 50px 50px, 200% 200%, 200% 200%;
+    animation: track-waves 14s ease-in-out infinite;
+
+    /* Полный вынос вычислений на видеокарту — абсолютная ликвидация лагов таблиц */
+    transform: translateZ(0);
+    will-change: background-position;
+}
+
+/* Виньетка для создания благородной глубины экрана */
+body::after {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: -1;
+    background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.03) 100%);
+    pointer-events: none;
+}
+
+/* ==========================================================================
+   3. НАВИГАЦИОННАЯ ПАНЕЛЬ С ТУМБЛЕРОМ СКОРОСТИ */
+
+.navbar {
+    background: var(--panel-bg);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0; z-index: 100;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.015);
+    transition: background-color 0.25s, border-color 0.25s;
+}
+
+.navbar-container {
+    max-width: 1050px;
+    margin: 0 auto;
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-text {
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.6px;
+    color: var(--text-main);
+    text-decoration: none;
+    text-transform: uppercase;
+    font-style: italic; /* Спортивный уклон движения вперед */
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+/* Кнопка-тумблер переключения тем с молнией */
+.theme-toggle-btn {
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.theme-toggle-btn:hover {
+    border-color: var(--text-muted);
+    background-color: var(--table-hover);
+}
+
+/* ==========================================================================
+   4. КАРТОЧКИ-ВИДЖЕТЫ И СТРУКТУРА ГРИДА */
+
+.container {
+    max-width: 1050px;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.grid-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+@media (min-width: 1024px) {
+    .grid-layout {
+        grid-template-columns: 310px 1fr;
+    }
+}
+
+/* Из матового плотного пластика оригинального CSS переводим в премиум-виджет */
+.card {
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px; /* Глубокое фирменное скругление Apple */
+    padding: 24px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.02);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    transform: translateZ(0);
+}
+
+.card:hover {
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.04);
+}
+
+.card-title {
+    margin: 0 0 1.5rem 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-main);
+    letter-spacing: -0.3px;
+}
+
+/* ==========================================================================
+   5. ФОРМЫ И ИНПУТЫ APPLE-STYLE */
+
+.form-group {
+    margin-bottom: 1.4rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.5px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    font-family: inherit;
+    font-weight: 500;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg);
+    color: var(--text-main);
+    box-sizing: border-box;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--atrain-blue);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+select.form-control {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://w3.org' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.85rem center;
+    background-size: 0.9rem;
+}
+
+/* ОБЪЕМНЫЙ ТУМБЛЕР (TOGGLE SWITCH) ДЛЯ REMEMBER ME */
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Изменили с space-between на flex-start */
+    gap: 12px;                  /* Задали фиксированный аккуратный отступ */
+    cursor: pointer;
+    margin: 1.25rem 0;
+}
+
+.checkbox-container input { display: none; }
+
+.toggle-switch {
+    width: 44px; height: 24px;
+    background-color: var(--border-color);
+    border-radius: 9999px;
+    position: relative;
+    transition: background-color 0.2s;
+}
+
+.toggle-switch::after {
+    content: "";
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 20px; height: 20px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.checkbox-container input:checked + .toggle-switch { background-color: var(--atrain-blue); }
+.checkbox-container input:checked + .toggle-switch::after { transform: translateX(20px); }
+
+/* ==========================================================================
+   6. КНОПКИ (ГЛЯНЦЕВЫЕ УКАЗАТЕЛИ) */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+
+/* Глянцевая основная черная/белая кнопка Apple */
+.btn-primary {
+    background-color: var(--text-main);
+    color: var(--bg-color);
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    opacity: 0.95;
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}
+
+.btn-text {
+    background: transparent;
+    color: var(--text-muted);
+    border-color: transparent;
+}
+
+.btn-text:hover {
+    color: var(--text-main);
+    background-color: var(--table-hover);
+}
+
+/* ==========================================================================
+   7. СОВРЕМЕННЫЕ АДАПТИРОВАННЫЕ ТАБЛИЦЫ КОРЗИНЫ И СТАТИСТИКИ */
+
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+}
+
+.training-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--panel-bg);
+}
+
+.training-table th, .training-table td {
+    padding: 16px 18px;
+    text-align: left;
+    font-size: 14px;
+border-bottom: 1px solid var(--border-color);
+}
+.training-table th {
+background-color: var(--table-header);
+color: var(--text-muted);
+font-weight: 600;
+text-transform: uppercase;
+font-size: 11px;
+letter-spacing: 0.5px;
+}
+.training-table tr:last-child td {
+border-bottom: none;
+}
+.training-table tr:hover td {
+background-color: var(--table-hover);
+}
+/* Премиальное выделение цифр телеметрии */
+.value-strength {
+font-size: 16px;
+font-weight: 700;
+color: var(--text-main);
+font-family: 'Orbitron', sans-serif;
+}
+.value-cardio {
+font-size: 16px;
+font-weight: 700;
+color: var(--atrain-blue);
+font-family: 'Orbitron', sans-serif;
+}
+/* Информационные плашки алертов */
+.alert {
+padding: 14px 20px;
+border-radius: 14px;
+font-size: 13px;
+font-weight: 600;
+margin-bottom: 1.5rem;
+border: 1px solid var(--border-color);
+background: var(--panel-bg);
+border-left: 5px solid var(--atrain-blue);
+}
