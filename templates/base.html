@@ -43,36 +43,52 @@
         </div>
     </nav>
 
-    <!-- Всплывающие уведомления -->
+    <!-- ⚡ Настоящие системные тосты (Выплывают справа под навигатором, не загораживая кнопки) -->
     <div class="flash-container">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
                     <div class="alert alert-{{ category }}">
-                        {{ message }}
+                        <span>{{ message }}</span>
+                        <!-- Кнопка закрытия (крестик ×) -->
+                        <button class="alert-close-btn" onclick="closeAlert(this)">&times;</button>
                     </div>
                 {% endfor %}
             {% endif %}
         {% endwith %}
     </div>
 
-    <!-- Основной трек страниц -->
+    <!-- 🎯 ГЛАВНЫЙ ТРЕК СТРАНИЦЫ (Все виджеты будут рендериться здесь!) -->
     <main class="container">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Системный контроллер переключения тем -->
+    <!-- ⚡ Интерактивный JS Контроллер интерфейса -->
     <script>
+        // Функция для плавного закрытия и улетания уведомления обратно вправо
+        function closeAlert(button) {
+            const alertElement = button.parentElement;
+            alertElement.style.opacity = '0';
+            alertElement.style.transform = 'translateX(30px) scale(0.95)';
+
+            // Удаляем элемент из верстки после завершения анимации CSS (200ms)
+            setTimeout(() => {
+                alertElement.remove();
+            }, 200);
+        }
+
         document.addEventListener("DOMContentLoaded", function() {
             const toggleBtn = document.getElementById("theme-toggle");
 
-            toggleBtn.addEventListener("click", function() {
-                let activeTheme = document.documentElement.getAttribute("data-theme");
-                let newTheme = (activeTheme === "neon") ? "stadium" : "neon";
+            if (toggleBtn) {
+                toggleBtn.addEventListener("click", function() {
+                    let activeTheme = document.documentElement.getAttribute("data-theme");
+                    let newTheme = (activeTheme === "neon") ? "stadium" : "neon";
 
-                document.documentElement.setAttribute("data-theme", newTheme);
-                localStorage.setItem("a-train-theme", newTheme);
-            });
+                    document.documentElement.setAttribute("data-theme", newTheme);
+                    localStorage.setItem("a-train-theme", newTheme);
+                });
+            }
         });
     </script>
 </body>
